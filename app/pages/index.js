@@ -1,4 +1,6 @@
-import Head from 'next/head'
+import Head from 'next/head';
+import Header from '../components/Header';
+import AddModal from '../components/AddModal';
 
 export default function Home() {
   return (
@@ -8,7 +10,10 @@ export default function Home() {
         <meta name="description" content="Notes App" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1 className='text-red-300 text-2xl'>Hii</h1>
+      <div>
+        <Header />
+        <AddModal />
+      </div>
     </div>
   )
 }
