@@ -1,7 +1,4 @@
 import Head from 'next/head';
-import Header from '../components/Header';
-import AddModal from '../components/AddModal';
-import Note from '../components/Note';
 import HeroSection from '../components/HeroSection';
 
 export default function Home() {
@@ -13,9 +10,6 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        {/* <Header /> */}
-        <AddModal />
-        {/* <Note /> */}
         <HeroSection />
       </div>
     </div>
