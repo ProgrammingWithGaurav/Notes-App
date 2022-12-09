@@ -2,13 +2,19 @@ import { LockClosedIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
+import {supabase} from '../supabaseClient';
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    console.log(data);
   };
   return (
     <>

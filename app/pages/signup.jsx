@@ -1,14 +1,27 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
+import { supabase } from "../supabaseClient";
 
 export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [profilePic, setProfilePic] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const new_profilePic = profilePic == "" ? "https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" : profilePic
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+    await supabase
+      .from("users")
+      .insert({
+        name, email,photoURL: new_profilePic
+      });
+    console.log(data);
   };
   return (
     <>
@@ -77,7 +90,23 @@ export default function Signup() {
                 </div>
                 <div>
                   <label
-                    htmlFor="email"
+                    htmlFor="photourl"
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Profile Picture (Optional)
+                  </label>
+                  <input
+                    name="photourl"
+                    id="photourl"
+                    value={profilePic}
+                    onChange={(e) => setProfilePic(e.target.value)}
+                    className="bg-gray-50 border-none focus:outline-none ring-1 ring-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 placeholder-gray-400 focus:ring-blue-500 focus:ring-2 focus:border-blue-500"
+                    placeholder="Photo URL"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="password"
                     className="block mb-2 text-sm font-medium text-gray-900"
                   >
                     Password
@@ -99,7 +128,7 @@ export default function Signup() {
                     Confirm password
                   </label>
                   <input
-                    type="confirm-password"
+                    type="password"
                     name="confirm-password"
                     id="confirm-password"
                     value={password}
@@ -136,7 +165,7 @@ export default function Signup() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  className="w-full text-white bg-indigo-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Create an account
                 </button>
