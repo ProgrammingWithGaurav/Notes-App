@@ -3,7 +3,7 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { useRecoilState } from "recoil";
-import { modalAdd } from "../atoms/AddModal";
+import { modalAdd } from "../atoms/AddModal.js";
 import Link from "next/link";
 
 const navigation = [
