@@ -1,9 +1,11 @@
 /* This example requires Tailwind CSS v3.0+ */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Head from "next/head";
+import {supabase} from '../supabaseClient';
+import { useRouter } from "next/router";
 
 const navigation = [
   { name: "Product", href: "#" },
@@ -14,7 +16,19 @@ const navigation = [
 
 export default function HeroSection() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isUser = false;
+  const [isUser, setIsUser] = useState(false);
+  const router = useRouter();
+
+  
+  useEffect(() => {
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if(data.session?.user) {
+        setIsUser(true);
+      }
+    }
+    getUser()
+  }, [])
 
   return (
     <div>

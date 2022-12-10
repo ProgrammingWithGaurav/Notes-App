@@ -3,10 +3,23 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import {supabase} from '../supabaseClient';
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const redirect = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if(data.session?.user) {
+        router.push('/dashboard')
+      }
+    }
+    redirect()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,6 +28,7 @@ export default function Login() {
       password: password,
     });
     console.log(data);
+    router.push('/dashboard');
   };
   return (
     <>

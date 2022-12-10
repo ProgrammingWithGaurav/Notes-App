@@ -1,27 +1,61 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import Alert from "../components/Alert";
+import { useRouter } from "next/router";
 
 export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [profilePic, setProfilePic] = useState("");
+  const [isSignupAlert, setIsSignupAlert] = useState(false);
+  const [isDuplicateEmail, setIsDuplicateEmail] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const redirect = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if(data.session?.user) {
+        router.push('/dashboard')
+      }
+    }
+    redirect()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const new_profilePic = profilePic == "" ? "https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" : profilePic
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-    await supabase
-      .from("users")
-      .insert({
-        name, email,photoURL: new_profilePic
-      });
-    console.log(data);
+    try {
+      const getAllEmails = await supabase.from("users").select("email");
+      console.log(getAllEmails);
+      const isUniqueEmail =
+        getAllEmails?.data?.filter((item) => item.email === email)[0]?.email !==
+        email;
+      console.log(isUniqueEmail);
+      if (isUniqueEmail) {
+        const new_profilePic =
+          profilePic == ""
+            ? "https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
+            : profilePic;
+        const { data, error } = await supabase.auth.signUp({
+          email: email,
+          password: password,
+        });
+        await supabase.from("users").upsert({
+          name: "Gaurav",
+          photoURL: new_profilePic,
+          email: "gaurav2499kumar@gmail.com",
+        });
+        setIsSignupAlert(true);
+        console.log(data, error);
+      }
+      else {
+      setIsDuplicateEmail(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <>
@@ -30,6 +64,12 @@ export default function Signup() {
         <meta name="description" content="Notes App" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {isSignupAlert && (
+        <Alert text="Account created Successfully ! Check your email to verify your account and then Login" setIsDuplicateEmail={setIsDuplicateEmail} setIsSignupAlert={setIsSignupAlert}/>
+      )}
+        {isDuplicateEmail && (
+        <Alert text="A user exists with same email. Try Different one or Login?"  setIsDuplicateEmail={setIsDuplicateEmail} setIsSignupAlert={setIsSignupAlert} />
+      )}
       <section className="my-5">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <a

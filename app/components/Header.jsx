@@ -5,6 +5,8 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useRecoilState } from "recoil";
 import { modalAdd } from "../atoms/AddModal.js";
 import Link from "next/link";
+import { supabase } from "../supabaseClient.js";
+import { useRouter } from "next/router.js";
 
 const navigation = [
   { name: "Dashboard", href: "#", current: true },
@@ -20,6 +22,7 @@ function classNames(...classes) {
 export default function Header() {
   const [open, setOpen] = useRecoilState(modalAdd);
   const isUser = false;
+  const router = useRouter();
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -143,6 +146,10 @@ export default function Header() {
                         <Menu.Item>
                           {({ active }) => (
                             <p
+                              onClick={() => {
+                                supabase.auth.signOut();
+                                router.push("/login")
+                              }}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
