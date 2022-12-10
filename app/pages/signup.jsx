@@ -30,9 +30,8 @@ export default function Signup() {
       const getAllEmails = await supabase.from("users").select("email");
       console.log(getAllEmails);
       const isUniqueEmail =
-        getAllEmails?.data?.filter((item) => item.email === email)[0]?.email !==
-        email;
-      console.log(isUniqueEmail);
+        getAllEmails?.data?.filter((item) => item.email === email)[0]?.email !== email;
+      // console.log(isUniqueEmail);
       if (isUniqueEmail) {
         const new_profilePic =
           profilePic == ""

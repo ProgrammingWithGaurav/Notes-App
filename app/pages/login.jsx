@@ -2,33 +2,45 @@ import { LockClosedIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
-import {supabase} from '../supabaseClient';
+import { supabase } from "../supabaseClient";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import Alert from "../components/Alert";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [userExists, setUserExists] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const redirect = async () => {
       const { data, error } = await supabase.auth.getSession();
-      if(data.session?.user) {
-        router.push('/dashboard')
+      if (data.session?.user) {
+        router.push("/dashboard");
       }
-    }
-    redirect()
-  }, [])
+    };
+    redirect();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-    console.log(data);
-    router.push('/dashboard');
+    const getAllEmails = await supabase.from("users").select("email");
+    console.log(getAllEmails);
+    const isEmail =
+      getAllEmails?.data?.filter((item) => item.email === email)[0]?.email ===
+      email;
+    if (isEmail) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+      console.log(data);
+      router.push("/dashboard");
+    } else {
+      console.log("Account doesn't exists with that email");
+      setUserExists(false);
+    }
   };
   return (
     <>
@@ -37,6 +49,7 @@ export default function Login() {
         <meta name="description" content="Notes App" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {!userExists && <Alert text="Account doesn't exists with that email. Please Signup First !" />}
       <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8">
           <div>

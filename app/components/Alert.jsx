@@ -17,9 +17,14 @@ export default function Alert({text, setIsSignupAlert, setIsDuplicateEmail}) {
           </div>
           <div className="order-2 flex-shrink-0 sm:order-3 sm:ml-3">
               <XMarkIcon onClick={() => {
+                try {
                 setIsDuplicateEmail(false);
                 setIsSignupAlert(false);
-                setVisible(false);
+                } catch (e) {
+                  console.log(e)
+                } finally {
+                  setVisible(false);
+                }
               }} className="h-6 w-6 text-white" aria-hidden="true" />
           </div>
         </div>
