@@ -1,13 +1,18 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 
 // open the modal
 import { modalEdit } from "../atoms/EditModal";
 import { useRecoilState } from "recoil";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
+import { NotesContext } from "../context/NotesContext";
 
-export default function AddModal({id, title, description, tag}) {
-  let [isOpen, setIsOpen] = useState(false);
+export default function EditModal() {
+  const { currentId, currentIndex, notes, updateNote } = useContext(NotesContext);
+  const note = notes[currentIndex];
+  const { title, description, tag } = note;
+  const [newTitle, setNewTitle] = useState(title);
+  const [newDescription, setNewDescription] = useState(description);
   const [open, setOpen] = useRecoilState(modalEdit);
   return (
     <>
@@ -54,17 +59,20 @@ export default function AddModal({id, title, description, tag}) {
                       <input
                         type="text"
                         id="title"
+                        value={newTitle}
+                        onChange={(e) => setNewTitle(e.target.value)}
                         className="relative block w-full appearance-none rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                       />
                     </div>
-                    </div>
-                    <div className="mt-2">
+                  </div>
+                  <div className="mt-2">
                     <div>
                       <label
                         htmlFor="title"
                         className="text-sm font-medium text-gray-700 mb-2 flex items-center"
                       >
-                        Tag <LockClosedIcon className='text-[5px] w-4 h-4 ml-2 text-red-300 hover:text-red-400'/>
+                        Tag{" "}
+                        <LockClosedIcon className="text-[5px] w-4 h-4 ml-2 text-red-300 hover:text-red-400" />
                       </label>
                       <input
                         type="text"
@@ -86,6 +94,8 @@ export default function AddModal({id, title, description, tag}) {
                         rows="4"
                         className="block p-2.5 w-full ring-none focus:ring-1 text-gray-900 rounded-lg focus:ring-indigo-500 focus:outline-none focus:border-none"
                         placeholder="Write your thoughts here..."
+                        value={newDescription}
+                        onChange={(e) => setNewDescription(e.target.value)}
                       />
                     </div>
                   </div>
@@ -94,7 +104,10 @@ export default function AddModal({id, title, description, tag}) {
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        setOpen(false);
+                        updateNote(currentId, currentIndex, newTitle, newDescription);
+                      }}
                     >
                       Update
                     </button>

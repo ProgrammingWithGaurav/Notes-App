@@ -1,36 +1,41 @@
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import AddModal from '../components/AddModal';
-import EditModal from '../components/EditModal';
-import RemoveModal from '../components/RemoveModal';
+import AddModal from "../components/AddModal";
+import EditModal from "../components/EditModal";
+import RemoveModal from "../components/RemoveModal";
 import Header from "../components/Header";
 import { useRouter } from "next/router";
 import Note from "../components/Note";
 import Loading from "../components/Loading";
+import { useContext } from "react";
+import { NotesContext } from "../context/NotesContext";
+import { supabase } from "../supabaseClient";
 
 function dashboard() {
   const [loading, setLoading] = useState(false);
+  const { notes } = useContext(NotesContext);
   const router = useRouter();
-  const isUser = true;
+  const [newNotes, setNewNotes] = useState(notes);
+
+  useEffect(() => {
+    setNewNotes(notes);
+  }, [notes]);
+
   useEffect(() => {
     setLoading(true);
-    if (!isUser) router.push("/login");
-    else {
-      console.log("User Data");
-      setLoading(false);
-    }
-  }, [isUser]);
-
-  const [notes, setNotes] = useState([
-    {
-      id: "1",
-      title: "Note",
-      description: "This is a note",
-      created_at: new Date(),
-      tag: "study",
-      user_uid: "adfadfkjalk232kljl",
-    },
-  ]);
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      console.log(data)
+      if (!data.session.user) {
+        router.push("/");
+        setLoading(false);
+      } 
+      else {
+        setLoading(false);
+      }
+    };
+    getUser();
+  }, []);
   return (
     <div>
       <Head>
@@ -45,8 +50,8 @@ function dashboard() {
         <EditModal />
         <RemoveModal />
         <div className="flex flex-wrap p-10">
-          {notes?.map((note) => (
-            <Note key={note.id} {...note} />
+          {newNotes?.map((note, index) => (
+            <Note key={note.id} {...note} index={index} />
           ))}
         </div>
       </div>
