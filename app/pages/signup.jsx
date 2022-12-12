@@ -41,13 +41,14 @@ export default function Signup() {
           email: email,
           password: password,
         });
-        await supabase.from("users").upsert({
-          name: "Gaurav",
-          photoURL: new_profilePic,
-          email: "gaurav2499kumar@gmail.com",
+        const uid = data.user.id;
+        await supabase.from("users").insert({
+          name,
+          photoURL: new_profilePic, email, uid
         });
         setIsSignupAlert(true);
         console.log(data, error);
+        router.push('/login');
       }
       else {
       setIsDuplicateEmail(true);

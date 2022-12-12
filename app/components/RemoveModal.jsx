@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 
 // open the modal
 import { useRecoilState } from "recoil";
@@ -8,8 +8,10 @@ import {
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
 import { modalRemove } from "../atoms/RemoveModal";
+import { NotesContext } from "../context/NotesContext";
 
-export default function AddModal({ id }) {
+export default function AddModal() {
+  const {deleteNote, currentId} = useContext(NotesContext)
   let [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useRecoilState(modalRemove);
   return (
@@ -51,7 +53,10 @@ export default function AddModal({ id }) {
                   <button
                       type="button"
                       className="mr-4 inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-200"
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        setOpen(false);
+                        deleteNote(currentId);
+                      }}
                     >
                       Delete
                     </button>

@@ -15,22 +15,16 @@ function dashboard() {
   const [loading, setLoading] = useState(false);
   const { notes } = useContext(NotesContext);
   const router = useRouter();
-  const [newNotes, setNewNotes] = useState(notes);
-
-  useEffect(() => {
-    setNewNotes(notes);
-  }, [notes]);
 
   useEffect(() => {
     setLoading(true);
     const getUser = async () => {
       const { data, error } = await supabase.auth.getSession();
-      console.log(data)
+      console.log(data);
       if (!data.session.user) {
         router.push("/");
         setLoading(false);
-      } 
-      else {
+      } else {
         setLoading(false);
       }
     };
@@ -47,10 +41,14 @@ function dashboard() {
         {loading && <Loading />}
         <Header />
         <AddModal />
-        <EditModal />
-        <RemoveModal />
+        {notes.length > 0 && (
+          <>
+            <EditModal />
+            <RemoveModal />
+          </>
+        )}
         <div className="flex flex-wrap p-10">
-          {newNotes?.map((note, index) => (
+          {notes.map((note, index) => (
             <Note key={note.id} {...note} index={index} />
           ))}
         </div>

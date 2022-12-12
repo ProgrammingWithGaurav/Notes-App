@@ -12,7 +12,7 @@ export default function Home() {
       if (data.session?.user) {
         router.push("/dashboard");
       }
-    };
+  };
     redirect();
   }, []);
   return (

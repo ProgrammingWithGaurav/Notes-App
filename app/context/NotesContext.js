@@ -4,22 +4,7 @@ import { supabase } from "../supabaseClient";
 export const NotesContext = createContext();
 
 const NotesProvider = ({ children }) => {
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      title: "First note",
-      description: "This is the first note",
-      created_at: new Date(),
-      user_uid: "user1",
-    },
-    {
-      id: 2,
-      title: "Second note",
-      description: "This is the second note",
-      created_at: new Date(),
-      user_uid: "user2",
-    },
-  ]);
+  const [notes, setNotes] = useState([]);
   const [userLoggedInDetails, setUserLoggedInDetails] = useState(null);
 
   useEffect(() => {
@@ -27,46 +12,67 @@ const NotesProvider = ({ children }) => {
       try {
         const { data } = await supabase.auth.getSession();
         const email = data.session.user.email;
-        const { data: users } = await supabase.from("users").select("*");
+        const { data: users } = await supabase
+          .from("users")
+          .select()
+          .eq("email", email);
         setUserLoggedInDetails(users[0]);
         console.log(users[0])
+        // console.log(users[0])
       } catch (e) {
         console.log(e);
       }
     };
+    
+    const get_notes = async () => {
+      const {data} = await supabase.from('notes').select("*")
+      setNotes(data);
+    }
     user_data();
+    get_notes();
   }, []);
 
-  const [currentId, setCurrentId] = useState(notes[0].id);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentId, setCurrentId] = useState(null);
+  const [index, setIndex] = useState(null);
 
-  const activeNote = (id, index) => {
-    setCurrentId(id);
-    setCurrentIndex(index);
+  const updateNote = (id, title, description) => {
+    notes[index].title = title;
+    notes[index].description = description;
+    console.log(notes);
+    setNotes(notes);
   };
 
-  const updateNote = (id, index, title, description) => {
-    const backup_notes = notes;
-    // Getting Id for modifying value to the server
-    // Getting index to quickly show the changes to the user
-    backup_notes[index].title = title;
-    backup_notes[index].description = description;
-    console.log(backup_notes, title, description);
-    setNotes(backup_notes);
+  const deleteNote = (id) => {
+    const newNotes = notes.filter((note) => {
+      return note.id !== id;
+    });
+    setNotes(newNotes);
+  };
+
+  const addNote = async (id, title, description, tag) => {
+    const new_note = {
+      id,
+      title,
+      description,
+      user_uid: await supabase.auth.getSession().user.id,
+      tag
+    }
+    setNotes([...notes, new_note]);
+    await supabase.from('notes').insert(new_note);
   };
 
   return (
     <NotesContext.Provider
       value={{
         notes,
-        setNotes,
         updateNote,
-        activeNote,
+        index,
+        setIndex,
         currentId,
         setCurrentId,
-        currentIndex,
-        setCurrentIndex,
         userLoggedInDetails,
+        addNote,
+        deleteNote,
       }}
     >
       {children}

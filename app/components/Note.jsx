@@ -6,7 +6,7 @@ import { modalRemove } from "../atoms/RemoveModal.js";
 import { NotesContext } from "../context/NotesContext.js";
 
 export default function Note({id, title, description, timestamp, tag, index}) {
-  const {activeNote} = useContext(NotesContext)
+  const {setCurrentId, setIndex} = useContext(NotesContext)
   const [showEditModal, setShowEditModal] = useRecoilState(modalEdit);
   const [showRemoveModal, setShowRemoveModal] = useRecoilState(modalRemove);
   return (
@@ -23,13 +23,16 @@ export default function Note({id, title, description, timestamp, tag, index}) {
         </span>
         <span className="inline-block bg-indigo-100 rounded-full font-semibold w-7 h-7 p-1 cursor-pointer text-indigo-500 hover:bg-indigo-200 hover:text-indigo-600 transition mr-2 mb-2 text-sm">
           <PencilSquareIcon  onClick={() => {
-            console.log(id, index)
             setShowEditModal(true);
-            activeNote(id, index);
+            setIndex(index);
+            setCurrentId(id);
           }}/>
         </span>
         <span className="inline-block bg-red-100 rounded-full font-semibold w-7 h-7 p-1 cursor-pointer text-red-500 hover:bg-red-200 hover:text-red-600 transition mr-2 mb-2 text-sm">
-          <XCircleIcon onClick={() => setShowRemoveModal(true)}/>
+          <XCircleIcon onClick={() => {
+            setShowRemoveModal(true);
+            setCurrentId(id);
+          }}/>
         </span>
       </div>
     </div>

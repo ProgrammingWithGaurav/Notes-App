@@ -8,11 +8,11 @@ import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { NotesContext } from "../context/NotesContext";
 
 export default function EditModal() {
-  const { currentId, currentIndex, notes, updateNote } = useContext(NotesContext);
-  const note = notes[currentIndex];
-  const { title, description, tag } = note;
-  const [newTitle, setNewTitle] = useState(title);
-  const [newDescription, setNewDescription] = useState(description);
+  const { currentId, notes, updateNote } = useContext(NotesContext);
+    const note = notes[0];
+    const { title, description, tag } = note;
+    const [newTitle, setNewTitle] = useState(title || '');
+    const [newDescription, setNewDescription] = useState(description || '');
   const [open, setOpen] = useRecoilState(modalEdit);
   return (
     <>
@@ -106,7 +106,7 @@ export default function EditModal() {
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={() => {
                         setOpen(false);
-                        updateNote(currentId, currentIndex, newTitle, newDescription);
+                        updateNote(currentId, newTitle, newDescription);
                       }}
                     >
                       Update
