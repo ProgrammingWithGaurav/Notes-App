@@ -18,19 +18,20 @@ const NotesProvider = ({ children }) => {
           .eq("email", email);
         setUserLoggedInDetails(users[0]);
         console.log(users[0])
-        // console.log(users[0])
       } catch (e) {
         console.log(e);
       }
     };
-    
+    user_data();
+  }, []);
+
+  useEffect(() => {
     const get_notes = async () => {
-      const {data} = await supabase.from('notes').select("*")
+      const {data} = await supabase.from('notes').select().eq("user_uid", userLoggedInDetails?.uid)
       setNotes(data);
     }
-    user_data();
     get_notes();
-  }, []);
+  }, [userLoggedInDetails, notes])
 
   const [currentId, setCurrentId] = useState(null);
   const [index, setIndex] = useState(null);
@@ -42,11 +43,13 @@ const NotesProvider = ({ children }) => {
     setNotes(notes);
   };
 
-  const deleteNote = (id) => {
+  const deleteNote = async (id) => {
     const newNotes = notes.filter((note) => {
       return note.id !== id;
     });
     setNotes(newNotes);
+    await supabase.from('notes').delete().match({"id": id});
+
   };
 
   const addNote = async (id, title, description, tag) => {
@@ -54,7 +57,7 @@ const NotesProvider = ({ children }) => {
       id,
       title,
       description,
-      user_uid: await supabase.auth.getSession().user.id,
+      user_uid: userLoggedInDetails.uid,
       tag
     }
     setNotes([...notes, new_note]);

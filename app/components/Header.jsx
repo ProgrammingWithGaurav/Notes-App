@@ -151,7 +151,7 @@ export default function Header() {
                             <p
                               onClick={() => {
                                 supabase.auth.signOut();
-                                router.push("/login")
+                                window.location.reload();
                               }}
                               className={classNames(
                                 active ? "bg-gray-100" : "",

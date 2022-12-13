@@ -21,7 +21,7 @@ function dashboard() {
     const getUser = async () => {
       const { data, error } = await supabase.auth.getSession();
       console.log(data);
-      if (!data.session.user) {
+      if (!data.session?.user) {
         router.push("/");
         setLoading(false);
       } else {

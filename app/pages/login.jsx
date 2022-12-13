@@ -35,8 +35,7 @@ export default function Login() {
         email: email,
         password: password,
       });
-      console.log(data);
-      router.push("/dashboard");
+      window.location.reload();
     } else {
       console.log("Account doesn't exists with that email");
       setUserExists(false);
