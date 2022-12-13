@@ -30,6 +30,7 @@ function dashboard() {
     };
     getUser();
   }, []);
+
   return (
     <div>
       <Head>
@@ -43,13 +44,15 @@ function dashboard() {
         <AddModal />
         {notes.length > 0 && (
           <>
-            <EditModal />
+          <EditModal />
             <RemoveModal />
           </>
         )}
         <div className="flex flex-wrap p-10">
           {notes.map((note, index) => (
+            <>
             <Note key={note.id} {...note} index={index} />
+            </>
           ))}
         </div>
       </div>

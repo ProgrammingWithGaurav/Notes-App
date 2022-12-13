@@ -6,7 +6,7 @@ import { modalRemove } from "../atoms/RemoveModal.js";
 import { NotesContext } from "../context/NotesContext.js";
 
 export default function Note({id, title, description, timestamp, tag, index}) {
-  const {setCurrentId, setIndex} = useContext(NotesContext)
+  const {setCurrentId, setIndex, setTitle, setDescription, setTag} = useContext(NotesContext)
   const [showEditModal, setShowEditModal] = useRecoilState(modalEdit);
   const [showRemoveModal, setShowRemoveModal] = useRecoilState(modalRemove);
   return (
@@ -25,6 +25,9 @@ export default function Note({id, title, description, timestamp, tag, index}) {
           <PencilSquareIcon  onClick={() => {
             setShowEditModal(true);
             setIndex(index);
+            setTitle(title)
+            setDescription(description)
+            setTag(tag);
             setCurrentId(id);
           }}/>
         </span>

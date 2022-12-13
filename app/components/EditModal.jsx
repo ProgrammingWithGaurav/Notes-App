@@ -1,18 +1,13 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useContext } from "react";
 
-// open the modal
-import { modalEdit } from "../atoms/EditModal";
 import { useRecoilState } from "recoil";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { NotesContext } from "../context/NotesContext";
+import { modalEdit } from "../atoms/EditModal";
 
 export default function EditModal() {
-  const { currentId, notes, updateNote } = useContext(NotesContext);
-    const note = notes[0];
-    const { title, description, tag } = note;
-    const [newTitle, setNewTitle] = useState(title || '');
-    const [newDescription, setNewDescription] = useState(description || '');
+  const { updateNote,currentId, title, setTitle , description, setDescription, tag} = useContext(NotesContext);
   const [open, setOpen] = useRecoilState(modalEdit);
   return (
     <>
@@ -59,8 +54,8 @@ export default function EditModal() {
                       <input
                         type="text"
                         id="title"
-                        value={newTitle}
-                        onChange={(e) => setNewTitle(e.target.value)}
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                         className="relative block w-full appearance-none rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                       />
                     </div>
@@ -77,7 +72,7 @@ export default function EditModal() {
                       <input
                         type="text"
                         disabled={true}
-                        value={"study"}
+                        value={tag}
                         id="title"
                         className="relative block w-full appearance-none rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                       />
@@ -94,8 +89,8 @@ export default function EditModal() {
                         rows="4"
                         className="block p-2.5 w-full ring-none focus:ring-1 text-gray-900 rounded-lg focus:ring-indigo-500 focus:outline-none focus:border-none"
                         placeholder="Write your thoughts here..."
-                        value={newDescription}
-                        onChange={(e) => setNewDescription(e.target.value)}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
                       />
                     </div>
                   </div>
@@ -106,7 +101,7 @@ export default function EditModal() {
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={() => {
                         setOpen(false);
-                        updateNote(currentId, newTitle, newDescription);
+                        updateNote(currentId);
                       }}
                     >
                       Update
