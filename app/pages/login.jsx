@@ -26,19 +26,18 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const getAllEmails = await supabase.from("users").select("email");
-    console.log(getAllEmails);
     const isEmail =
       getAllEmails?.data?.filter((item) => item.email === email)[0]?.email ===
       email;
-    if (isEmail) {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const {data} = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
       });
-      window.location.reload();
-    } else {
+    if (data?.session === null || data?.user === null) {
       console.log("Account doesn't exists with that email");
       setUserExists(false);
+    } else {
+      window.location.reload();
     }
   };
   return (
