@@ -3,6 +3,9 @@
 npm run start
 ```
 
+# live site
+- https://best-note-app.netlify.app
+
 
 # Tech Stack Used ⚙️
 - NextJs
